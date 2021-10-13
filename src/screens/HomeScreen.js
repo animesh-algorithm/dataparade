@@ -1,8 +1,9 @@
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { useState, useEffect } from "react";
-
+import { useLocation } from "react-router-dom";
 const HomeScreen = () => {
+  const location = useLocation();
   const [currTab, setCurrTab] = useState(
     document.querySelector("a[href='/playlists']")
   );
@@ -14,7 +15,6 @@ const HomeScreen = () => {
     });
   };
   useEffect(() => {
-    console.log(currTab);
     currTab?.classList?.add("border-bottom");
     currTab?.classList?.add("border-dark");
   }, [currTab]);
@@ -28,7 +28,14 @@ const HomeScreen = () => {
           width: "100%",
         }}
       >
-        <Nav className="mr-auto d-inline-block" onClick={focus}>
+        <Nav
+          className={`mr-auto d-inline-block ${
+            location.pathname === "/playlists" || location.pathname === "/"
+              ? "border-bottom border-dark"
+              : ""
+          }`}
+          onClick={focus}
+        >
           <LinkContainer to="/playlists">
             <Nav.Link>Playlists</Nav.Link>
           </LinkContainer>
