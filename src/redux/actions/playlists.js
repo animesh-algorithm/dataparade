@@ -25,12 +25,23 @@ export const addPlaylistToUserCollection =
   async (dispatch, getState, { getFirebase, getFirestore }) => {
     try {
       const firestore = getFirestore();
-      const user = getState().firebase.auth.uid;
-      const videos = await getPlaylistContent(playlistId);
-      // for (let video of videos) {
-      //   await firestore.collection(`todo_${playlistId}`).doc()
-      // }
-      await firestore.collection(`todo_${playlistId}`).doc(videos[0].id);
+      const uid = getState().firebase.auth.uid;
+      // const videos = await getPlaylistContent(playlistId);
+      const profile = await firestore
+        .collection("profiles")
+        .doc(uid)
+        .get()
+        .then((snapshot) => snapshot.data());
+      let playlists = profile.playlists ? profile.playlists : {};
+      if (!playlists[playlistId]) {
+        playlists[playlistId] = {
+          inProgress: [],
+          done: [],
+        };
+        await firestore.collection("profiles").doc(uid).update({
+          playlists: playlists,
+        });
+      }
       dispatch({
         type: ADD_PLAYLIST_TO_USER_COLLECTION,
       });
