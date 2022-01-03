@@ -21,7 +21,12 @@ const handleDragEnd = (
   if (!result.destination) return;
   const { source, destination } = result;
   if (source.droppableId !== destination.droppableId) {
-    const status = destination.droppableId.split("_")[1];
+    let status;
+    if (destination.droppableId.split("_").length === 3) {
+      status = destination.droppableId.split("_")[2];
+    } else {
+      status = destination.droppableId.split("_")[1];
+    }
     const sourceColumn = columns[source.droppableId];
     const destinationColumn = columns[destination.droppableId];
     const sourceItems = [...sourceColumn.videos];
@@ -81,7 +86,6 @@ const PlaylistContent = ({
   useEffect(() => {
     const playlistId = location.pathname.split("/")[2];
     fetchVideosForPlaylist(playlistId);
-    addPlaylistToUserCollection(playlistId);
   }, [location]);
   useEffect(() => {
     const playlistId = location.pathname.split("/")[2];
@@ -194,7 +198,6 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = (dispatch, props) => {
-  dispatch(addPlaylistToUserCollection(props.match.params.id));
   return {
     fetchVideosForPlaylist: (playlistId) =>
       dispatch(fetchVideosForPlaylist(playlistId)),
